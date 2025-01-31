@@ -1,13 +1,14 @@
 import sympy
 
-def rotate(num: int, numsize: int=128, bits: int=25):
+def rotate(num: int, numsize: int, bits: int) -> int:
     """
-    Splits a number into equal length parts, but in binary!!
+    I don't know if this function will work for negative numbers or lengths above numsize. I don't want to find out.
     """
-    assert 0 <= num < 2**128, "Class = IDEA, Function = rotate: Rotated number must be between 0 and 2**128"
+    assert 0 < bits < numsize, "rotate: Bits to rotate must be a natural number below numsize."
+    assert 0 <= num < (1 << numsize), "rotate: Rotated number must be between 0 and 2**128."
     return ((num << bits) | (num >> (numsize-bits))) & ((1 << numsize)-1)
 
-def split_bin(num: int, divisors: int, divisor_size: int=16):
+def split_bin(num: int, divisors: int, divisor_size: int=16) -> list:
     nums = []
 
     for i in range(divisors-1, -1, -1):
@@ -15,11 +16,11 @@ def split_bin(num: int, divisors: int, divisor_size: int=16):
 
     return nums
 
-def concatenate_bin(nums: list, divisor_size: int=16):
-
-    num = 0b0
+def concatenate_bin(nums: list, divisor_size: int=16) -> int:
+    num = 0
     for count, piece in enumerate(nums):
         num = num | (piece << (divisor_size*(len(nums)-count-1)))
+
     return num
 
 def encode_string_to_bytes(string: str) -> bytes:
@@ -39,7 +40,6 @@ def decode_bytes_to_string(byte: bytes) -> str:
 
 def decode_bits_to_string(bits: int) -> str:
     return decode_bytes_to_string(decode_bits_to_bytes(bits))
-
 
 def generate_key_pair(key_size: int=1024) -> tuple[tuple[int, int], tuple[int, int]]:
     p, q = sympy.randprime(1<<(key_size//2-1), 1<<(key_size//2)), sympy.randprime(1<<(key_size//2-1), 1<<(key_size//2))
