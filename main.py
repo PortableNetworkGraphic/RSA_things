@@ -1,15 +1,10 @@
 from functions import *
 from RSA import *
+from time import perf_counter as pc
 
-P, S = generate_key_pair(1024)
-print(P)
-print(S)
+def main():
+    pass
 
-m = 0xFFFFF
 
-print(m)
-c = RSA_encrypt(m, P)
-print(c)
-print(RSA_decrypt(c, S))
-
-print("test?")
+if __name__ == '__main__':
+    main()

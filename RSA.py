@@ -1,18 +1,9 @@
 from functions import *
 
-def RSA_encrypt(m: int, public: tuple[int, int]) -> int:
+def RSA(m: int, key: tuple[int, int]) -> int:
 
-    e, N = public
+    ed, N = key
 
-    c = pow(m, e, N)
+    return pow(m, ed, N)
 
-    return c
-
-def RSA_decrypt(c: int, secret: tuple[int, int]) -> int:
-
-    d, N = secret
-
-    m = pow(c, d, N)
-
-    return m
 
