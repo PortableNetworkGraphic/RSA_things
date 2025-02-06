@@ -1,15 +1,14 @@
 from functions import *
-from RSA import *
-from time import perf_counter as pc
-from primatives.sym_keyed_primatives.stream_ciphers import one_time_pad
 from primatives.sym_keyed_primatives.block_ciphers import IDEA
+from random import getrandbits
 
 def main():
-    m = 0b11011110011011011010
-    k = 0b10011001010101010101
+    p = encode_string_to_bits("hello")
+    k = getrandbits(p.bit_length())
 
-    one_time_pad(k).
-
+    c = IDEA(k).encrypt(p)
+    print(c)
+    print(decode_bits_to_string(IDEA(k).decrypt(c)))
 
 
 if __name__ == '__main__':

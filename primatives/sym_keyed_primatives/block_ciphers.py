@@ -89,8 +89,6 @@ class IDEA:
 
         return deckeys
 
-
-
     def full_round(self, X1, X2, X3, X4, Z1, Z2, Z3, Z4, Z5, Z6):
 
         S1 = self.mul_mod(X1, Z1)
@@ -169,7 +167,7 @@ class IDEA:
         for block in blocks:
             encrypted_blocks.append(self.encrypt_block(block))
 
-        return concatenate_bin(encrypted_blocks, 64), self.key
+        return concatenate_bin(encrypted_blocks, 64)
 
     def decrypt(self, binary: int):
 
@@ -179,5 +177,5 @@ class IDEA:
         for block in encrypted_blocks:
             decrypted_blocks.append(self.decrypt_block(block))
 
-        return concatenate_bin(decrypted_blocks, 64), self.key
+        return concatenate_bin(decrypted_blocks, 64)
 
