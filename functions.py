@@ -1,6 +1,5 @@
-import sympy
-import numpy as np
 from PIL import Image
+from math import ceil
 
 def rotate(num: int, numsize: int, bits: int) -> int:
     """
@@ -10,20 +9,42 @@ def rotate(num: int, numsize: int, bits: int) -> int:
     assert 0 <= num < (1 << numsize), "rotate: Rotated number must be between 0 and 2**128."
     return ((num << bits) | (num >> (numsize-bits))) & ((1 << numsize)-1)
 
-def split_bin(num: int, divisors: int, divisor_size: int=16) -> list[int]:
+def pad_byte(data: bytes, block_size: int=8) -> bytes:
+    pad_len = (block_size - (len(data) % block_size)) % block_size
+    return data + bytes([pad_len] * pad_len)
+
+def unpad_byte(data: bytes, block_size: int=8) -> bytes:
+    assert 0 < len(data) <= block_size, "How? what the?"
+    pad_len = data[-1]
+    if not 0 < pad_len < block_size: return data
+
+    return data[:-pad_len] if pad_len < block_size else data
+
+
+def split_bin(num: int, blocks: int, block_size: int=16) -> list[int]:
     nums: list[int] = []
 
-    for i in range(divisors-1, -1, -1):
-        nums.append((num >> i*divisor_size) & (2**divisor_size-1))
+    for i in range(blocks - 1, -1, -1):
+        nums.append((num >> i * block_size) & (2 ** block_size - 1))
 
     return nums
 
-def concatenate_bin(nums: list, divisor_size: int=16) -> int:
+def concatenate_bin(nums: list, block_size: int=16) -> int:
     num = 0
     for count, piece in enumerate(nums):
-        num = num | (piece << (divisor_size*(len(nums)-count-1)))
+        num = num | (piece << (block_size * (len(nums) - count - 1)))
 
     return num
+
+def split_bytes(data: bytes, block_size: int) -> list[bytes]:
+
+    return [pad_byte(data[i: i + block_size], block_size) for i in range(0, len(data), block_size)]
+
+def concatenate_bytes(data: list[bytes], block_size: int) -> bytes:
+
+    data = b''.join([unpad_byte(b) for b in data])
+
+    return data
 
 def string_to_bytes(string: str) -> bytes:
     return string.encode(encoding='utf-8')
@@ -62,3 +83,17 @@ def apply_function_to_each_pixel_of_an_image(image: Image.Image, function) -> Im
             image.putpixel((x, y), new_val)
 
     return image
+
+def encrypt(data: bytes, encryption_function, block_size: int) -> bytes:
+    blocks = split_bytes(data, block_size//8)
+
+    encrypted_blocks = []
+    for block in blocks:
+        encrypted_blocks.append(encryption_function(block))
+
+    return concatenate_bytes(encrypted_blocks, block_size//8)
+
+def decrypt(data: bytes, decryption_function, block_size: int) -> bytes:
+
+    return encrypt(data, decryption_function, block_size)
+

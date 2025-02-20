@@ -9,12 +9,11 @@ def main():
 
     i = IDEA(key)
 
-    p = string_to_bytes("hello")
-    print(p)
-    c = i.encrypt(p)
-    print(c)
-    d = i.decrypt(c)
-    print(d)
+    p = b"12345678and mad scientists"
+    c = encrypt(p, i.encrypt_block, 64)
+    d = decrypt(c, i.decrypt_block, 64)
+    print(p,c,d)
+
 
 if __name__ == '__main__':
     main()

@@ -122,7 +122,10 @@ class IDEA:
 
         return S11, S13, S12, S14
 
-    def encrypt_block(self, block: int) -> int:
+    def encrypt_block(self, raw_block: bytes) -> bytes:
+
+        block = bytes_to_bits(raw_block)
+
 
         assert 0 <= block < 2**64, "Block must be integer within the range 0 to 2**64."
 
@@ -136,13 +139,16 @@ class IDEA:
         P3 = (P3 + self.subkeys[8][2]) % 0x10000
         P4 = (P4 + self.subkeys[8][3]) % 0x10000
 
-        return (P1 << 48) | (P2 << 32) | (P3 << 16) | P4
+        encrypted_block = bits_to_bytes((P1 << 48) | (P2 << 32) | (P3 << 16) | P4)
 
-    def decrypt_block(self, block: int) -> int:
+        return encrypted_block
+
+    def decrypt_block(self, raw_block: bytes) -> bytes:
         """
         The decrypt function is effectively ideentical to the encrypt function, but uses
         a different set of keys.
         """
+        block = bytes_to_bits(raw_block)
 
         assert 0 <= block < 2**64, "Block must be integer within the range 0 to 2**64."
 
@@ -156,32 +162,6 @@ class IDEA:
         P3 = (P3 + self.deckeys[8][2]) % 0x10000
         P4 = (P4 + self.deckeys[8][3]) % 0x10000
 
-        return concatenate_bin([P1, P2, P3, P4], 16)
+        decrypted_block = bits_to_bytes(concatenate_bin([P1, P2, P3, P4], 16))
 
-    def decrypt(self, encrypted_byte_data: bytes) -> bytes:
-
-        binary = bytes_to_bits(encrypted_byte_data)
-
-        encrypted_blocks = split_bin(binary, ceil((len(bin(binary))-2)/64), 64)
-
-        decrypted_blocks = []
-        for block in encrypted_blocks:
-            decrypted_blocks.append(self.decrypt_block(block))
-
-        byte_data = bits_to_bytes(concatenate_bin(decrypted_blocks, 64))
-
-        return byte_data
-
-    def encrypt(self, byte_data: bytes) -> bytes:
-
-        binary = bytes_to_bits(byte_data)
-
-        blocks = split_bin(binary, ceil((len(bin(binary))-2)/64), 64)
-
-        encrypted_blocks = []
-        for block in blocks:
-            encrypted_blocks.append(self.encrypt_block(block))
-
-        encrypted_byte_data = bits_to_bytes(concatenate_bin(encrypted_blocks, 64))
-
-        return encrypted_byte_data
+        return decrypted_block
