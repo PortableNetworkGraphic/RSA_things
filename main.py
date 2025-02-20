@@ -7,18 +7,14 @@ def main():
 
     key = 0xedb162c0f8b7778d76829edb6a74494
 
-    I = IDEA(key)
+    i = IDEA(key)
 
-    img = Image.open("one_time_clam.png")
-    img = img.convert("L")
-    width, height = img.size
-
-    img = apply_function_to_each_pixel_of_an_image(img, lambda x: 255-x)
-
-    b = image_to_blocks(img, 64)
-    print(len(b))
-
-
+    p = string_to_bytes("hello")
+    print(p)
+    c = i.encrypt(p)
+    print(c)
+    d = i.decrypt(c)
+    print(d)
 
 if __name__ == '__main__':
     main()

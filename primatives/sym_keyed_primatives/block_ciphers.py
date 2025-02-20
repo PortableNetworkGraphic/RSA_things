@@ -158,7 +158,9 @@ class IDEA:
 
         return concatenate_bin([P1, P2, P3, P4], 16)
 
-    def decrypt(self, binary: int) -> int:
+    def decrypt(self, encrypted_byte_data: bytes) -> bytes:
+
+        binary = bytes_to_bits(encrypted_byte_data)
 
         encrypted_blocks = split_bin(binary, ceil((len(bin(binary))-2)/64), 64)
 
@@ -166,17 +168,20 @@ class IDEA:
         for block in encrypted_blocks:
             decrypted_blocks.append(self.decrypt_block(block))
 
-        return concatenate_bin(decrypted_blocks, 64)
+        byte_data = bits_to_bytes(concatenate_bin(decrypted_blocks, 64))
 
-    def encrypt(self, binary: int) -> int:
+        return byte_data
+
+    def encrypt(self, byte_data: bytes) -> bytes:
+
+        binary = bytes_to_bits(byte_data)
 
         blocks = split_bin(binary, ceil((len(bin(binary))-2)/64), 64)
 
-        print(blocks)
-
         encrypted_blocks = []
-
         for block in blocks:
             encrypted_blocks.append(self.encrypt_block(block))
 
-        return concatenate_bin(encrypted_blocks, 64)
+        encrypted_byte_data = bits_to_bytes(concatenate_bin(encrypted_blocks, 64))
+
+        return encrypted_byte_data
