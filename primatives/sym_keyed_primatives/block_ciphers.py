@@ -1,5 +1,5 @@
 from math import ceil
-
+from PIL import Image
 from functions import *
 
 class IDEA:
@@ -11,7 +11,7 @@ class IDEA:
         self.deckeys = self.inverse_gen_keys()
 
     @staticmethod
-    def mul_inv(Z: int):
+    def mul_inv(Z: int) -> int:
         """
         Computes the multiplicative inverse of Z mod 65537 using Extended Euclidean Algorithm.
         Created by ChatGPT bc I don't know what the hell this means.
@@ -37,7 +37,7 @@ class IDEA:
         return t
 
     @staticmethod
-    def mul_mod(a, b):
+    def mul_mod(a, b) -> int:
         assert 0 <= a <= 0x10000
         assert 0 <= b <= 0x10000
 
@@ -55,7 +55,7 @@ class IDEA:
         assert 0 <= r <= 0xFFFF
         return r
 
-    def gen_subkeys(self):
+    def gen_subkeys(self) -> list[list[int]]:
 
         subkeys = []
         key = self.key
@@ -71,7 +71,7 @@ class IDEA:
 
         return subkeys[:8]+[subkeys[8][:4]]
 
-    def inverse_gen_keys(self):
+    def inverse_gen_keys(self) -> list[list[int]]:
 
         deckeys = [[0]*6 for _ in range(8)]+[[0]*4]
 
@@ -90,7 +90,7 @@ class IDEA:
 
         return deckeys
 
-    def full_round(self, X1, X2, X3, X4, Z1, Z2, Z3, Z4, Z5, Z6):
+    def full_round(self, X1, X2, X3, X4, Z1, Z2, Z3, Z4, Z5, Z6) -> tuple[int, int, int, int]:
 
         S1 = self.mul_mod(X1, Z1)
 
@@ -112,13 +112,13 @@ class IDEA:
 
         S10 = (S7 + S9) % 0x10000
 
-        S11 = S1 ^ S9
+        S11: int = S1 ^ S9
 
-        S12 = S3 ^ S9
+        S12: int = S3 ^ S9
 
-        S13 = S2 ^ S10
+        S13: int = S2 ^ S10
 
-        S14 = S4 ^ S10
+        S14: int = S4 ^ S10
 
         return S11, S13, S12, S14
 
@@ -158,18 +158,7 @@ class IDEA:
 
         return concatenate_bin([P1, P2, P3, P4], 16)
 
-    def encrypt(self, binary: int):
-
-        blocks = split_bin(binary, ceil((len(bin(binary))-2)/64), 64)
-
-        encrypted_blocks = []
-
-        for block in blocks:
-            encrypted_blocks.append(self.encrypt_block(block))
-
-        return concatenate_bin(encrypted_blocks, 64)
-
-    def decrypt(self, binary: int):
+    def decrypt(self, binary: int) -> int:
 
         encrypted_blocks = split_bin(binary, ceil((len(bin(binary))-2)/64), 64)
 
@@ -179,3 +168,15 @@ class IDEA:
 
         return concatenate_bin(decrypted_blocks, 64)
 
+    def encrypt(self, binary: int) -> int:
+
+        blocks = split_bin(binary, ceil((len(bin(binary))-2)/64), 64)
+
+        print(blocks)
+
+        encrypted_blocks = []
+
+        for block in blocks:
+            encrypted_blocks.append(self.encrypt_block(block))
+
+        return concatenate_bin(encrypted_blocks, 64)
