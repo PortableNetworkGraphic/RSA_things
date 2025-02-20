@@ -2,6 +2,7 @@ from primatives.sym_keyed_primatives.block_ciphers import IDEA
 from random import getrandbits
 from PIL import Image
 from functions import *
+from encryption import *
 
 def main():
 
@@ -9,10 +10,10 @@ def main():
 
     i = IDEA(key)
 
-    p = b"12345678and mad scientists"
-    c = encrypt(p, i.encrypt_block, 64)
-    d = decrypt(c, i.decrypt_block, 64)
-    print(p,c,d)
+    p = b"0"
+    c = encrypt(key, p, 'IDEA')
+    d = decrypt(key, c, "IDEA")
+    print(p, c, d)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,5 @@
 from PIL import Image
-from math import ceil
+
 
 def rotate(num: int, numsize: int, bits: int) -> int:
     """
@@ -83,17 +83,3 @@ def apply_function_to_each_pixel_of_an_image(image: Image.Image, function) -> Im
             image.putpixel((x, y), new_val)
 
     return image
-
-def encrypt(data: bytes, encryption_function, block_size: int) -> bytes:
-    blocks = split_bytes(data, block_size//8)
-
-    encrypted_blocks = []
-    for block in blocks:
-        encrypted_blocks.append(encryption_function(block))
-
-    return concatenate_bytes(encrypted_blocks, block_size//8)
-
-def decrypt(data: bytes, decryption_function, block_size: int) -> bytes:
-
-    return encrypt(data, decryption_function, block_size)
-

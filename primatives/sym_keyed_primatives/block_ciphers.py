@@ -126,7 +126,6 @@ class IDEA:
 
         block = bytes_to_bits(raw_block)
 
-
         assert 0 <= block < 2**64, "Block must be integer within the range 0 to 2**64."
 
         P1, P2, P3, P4 = split_bin(block, 4, 16)
@@ -165,3 +164,13 @@ class IDEA:
         decrypted_block = bits_to_bytes(concatenate_bin([P1, P2, P3, P4], 16))
 
         return decrypted_block
+
+method_info = {
+    "IDEA": {
+        "type": "block",
+        "blocksize": 64,
+        "class": IDEA,
+        "encrypt": IDEA.encrypt_block,
+        "decrypt": IDEA.decrypt_block,
+    }
+}

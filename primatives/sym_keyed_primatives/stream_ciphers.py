@@ -1,3 +1,5 @@
+from sympy.abc import lamda
+
 from functions import bytes_to_bits, bits_to_bytes
 
 
@@ -14,3 +16,9 @@ class OneTimePad:
 
     def decrypt(self, c: bytes) -> bytes:
         return self.encrypt(c)
+
+method_info = {
+    "OTP": [
+        OneTimePad, OneTimePad.encrypt, OneTimePad.decrypt
+    ]
+}
